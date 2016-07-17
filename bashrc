@@ -90,6 +90,7 @@ fi
 #alias l='ls -CF'
 
 alias ssh='ssh -AX'
+alias tmux="tmux -2"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -111,7 +112,36 @@ if ! shopt -oq posix; then
   fi
 fi
 
-alias tmux="tmux -2"
-export PS1='\t `if [ $? = 0 ]; then echo "\[\e[32m\]✔"; else echo "\[\e[31m\]✘"; fi` \[\e[00;31m\]\u\[\e[00m\]@\[\e[32m\]\H:`[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "\[\e[31m\]" || echo "\[\e[32m\]"`$(__git_ps1 "(%s)\[\e[00m\]")\[\e[01;34m\]\w\[\e[00m\]\$ '
+# Runtime of last command
+
+function timer_start {
+  timer=${timer:-$SECONDS}
+}
+
+function timer_stop {
+  timer_show=$(($SECONDS - $timer))
+  unset timer
+}
+
+trap 'timer_start' DEBUG
+
+if [ "$PROMPT_COMMAND" == "" ]; then
+  PROMPT_COMMAND="timer_stop"
+else
+  PROMPT_COMMAND="$PROMPT_COMMAND; timer_stop"
+fi
+
+runtime()
+{	
+	if (( timer_show  >= 1 )); then
+        	# display runtime seconds as days, hours, minutes, and seconds
+        	(( timer_show >= 86400 )) && echo -n $((timer_show / 86400))d
+        	(( timer_show >= 3600 )) && echo -n $((timer_show % 86400 / 3600))h
+        	(( timer_show >= 60 )) && echo -n $((timer_show % 3600 / 60))m
+        	echo -n $((timer_show % 60))"s "
+	fi
+}
+
+export PS1='\t `if [ $? = 0 ]; then echo "\[\e[32m\]✔"; else echo "\[\e[31m\]✘"; fi` \[\e[00;31m\]\u\[\e[00m\]@\[\e[32m\]\H:`[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "\[\e[31m\]" || echo "\[\e[32m\]"`$(__git_ps1 "(%s)\[\e[00m\]")\[\e[01;34m\]\w\[\e[00m\] \[\e[33m\]$(runtime)\[\e[m\]$ '
 MANPAGER="/usr/bin/most -s"
 stty -ixon
