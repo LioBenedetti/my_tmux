@@ -112,6 +112,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# GIT 
 
 COLOR_RED="\033[0;31m"
 COLOR_YELLOW="\033[0;33m"
@@ -120,8 +121,6 @@ COLOR_OCHRE="\033[38;5;95m"
 COLOR_BLUE="\033[0;34m"
 COLOR_WHITE="\033[0;37m"
 COLOR_RESET="\033[0m"
-
-# GIT 
 
 git_enable=true
 
@@ -184,7 +183,7 @@ runtime()
 }
 
 PS1='\t '				# Time
-PS1+="`if [ $? = 0 ]; then echo "$COLOR_GREEN✔"; else echo "$COLOR_RED✘"; fi` "
+PS1+='`if [ $? = 0 ]; then echo "\[\e[32m\]✔ "; else echo "\[\e[31m\]✘ "; fi`'
 PS1+="$COLOR_RED\u\[\e[00m\]@\[\e[32m\]\H:"
 if $git_enable; then
 PS1+="\[\$(git_color)\]"        	# colors git status
