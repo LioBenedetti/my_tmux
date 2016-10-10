@@ -8,6 +8,8 @@ case $- in
       *) return;;
 esac
 
+export LC_ALL='en_US.UTF-8'
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -43,7 +45,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -85,12 +87,26 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
 
 alias ssh='ssh -AX'
 alias tmux="tmux -2"
+
+# handy short cuts #
+alias h='history'
+alias j='jobs -l'
+
+alias vi='vim "+sy on"'
+alias vim='vim "+sy on"'
+alias edit='vim'
+
+alias wget='wget -c'
+
+
+
+#alias __git_ps1='/bin/true'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -131,6 +147,11 @@ else
   PROMPT_COMMAND="$PROMPT_COMMAND; timer_stop"
 fi
 
+export EDITOR='vim'
+if [ -f ~/.bin/tmuxinator.bash ]; then
+	source ~/.bin/tmuxinator.bash
+fi
+
 runtime()
 {	
 	if (( timer_show  >= 1 )); then
@@ -151,3 +172,4 @@ curl 'https://files.cblue.be/index.php' -H 'Host: files.cblue.be'  -H 'Authoriza
 export PS1='\t `if [ $? = 0 ]; then echo "\[\e[32m\]✔ "; else echo "\[\e[31m\]✘ "; fi` \[\e[00;31m\]\u\[\e[00m\]@\[\e[32m\]\H:`[[ $(git status 2> /dev/null | tail -n1| grep "nothing to commit") != "nothing to commit, working directory clean" ]] && echo "\[\e[31m\]" || echo "\[\e[32m\]"`$(__git_ps1 "(%s)\[\e[00m\]")\[\e[01;34m\]\w\[\e[00m\] \[\e[33m\]$(runtime)\[\e[m\]$ '
 MANPAGER="/usr/bin/most -s"
 stty -ixon
+
